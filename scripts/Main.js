@@ -1,14 +1,14 @@
 "use strict";
 
-const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d");
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
 
-let frame = 0;
-let blocks = [];
-let spawnRect = canvas;
-let interactive = true;
-let blockColor = randomColor();
-let backgroundColor = randomColor();
+var frame = 0;
+var blocks = [];
+var spawnRect = canvas;
+var interactive = true;
+var blockColor = randomColor();
+var backgroundColor = randomColor();
 
 function setup() {
 	window.addEventListener("resize", resize);
@@ -24,22 +24,22 @@ function setup() {
 }
 
 function generateBlocks() {
-	const sizeMin = 0.006;
-	const sizeMax = 0.01;
-	const heightBias = 1.25;
+	var sizeMin = 0.006;
+	var sizeMax = 0.01;
+	var heightBias = 1.25;
 	blocks = [];
 	blockColor = backgroundColor;
 	backgroundColor = randomColor();
-	const heightCount = randomBetween(spawnRect.height * sizeMin * heightBias, spawnRect.height * sizeMax * heightBias);
-	const height = spawnRect.height / heightCount;
-	for (let j = 0; j < heightCount; j++) {
-		const widthCount = randomBetween(spawnRect.width * sizeMin, spawnRect.width * sizeMax);
-		const width = spawnRect.width / widthCount;
-		for (let i = 0; i < widthCount; i++) {
-			const pos = {x: 0, y: 0};
-			const x = pos.x + i * width;
-			const y = pos.y + j * height;
-			const tile = new block(x, y, width, height, blockColor);
+	var heightCount = randomBetween(spawnRect.height * sizeMin * heightBias, spawnRect.height * sizeMax * heightBias);
+	var height = spawnRect.height / heightCount;
+	for (var j = 0; j < heightCount; j++) {
+		var widthCount = randomBetween(spawnRect.width * sizeMin, spawnRect.width * sizeMax);
+		var width = spawnRect.width / widthCount;
+		for (var i = 0; i < widthCount; i++) {
+			var pos = {x: 0, y: 0};
+			var x = pos.x + i * width;
+			var y = pos.y + j * height;
+			var tile = new block(x, y, width, height, blockColor);
 			blocks.push(tile);
 		}
 	}
@@ -48,7 +48,7 @@ function generateBlocks() {
 function draw() {
 	context.fillStyle = backgroundColor;
 	context.fillRect(0, 0, canvas.width, canvas.height);
-	for (let i = blocks.length - 1; i >= 0; i--) {
+	for (var i = blocks.length - 1; i >= 0; i--) {
 		blocks[i].draw();
 	}
 	frame = window.requestAnimationFrame(draw);
@@ -63,9 +63,9 @@ function resize() {
 
 function touchBlocks(e) {
 	if (!interactive) return;
-	for (let t = 0; t < e.touches.length; t++) {
-		for (let i = 0; i < blocks.length; i++) {
-			const tile = blocks[i];
+	for (var t = 0; t < e.touches.length; t++) {
+		for (var i = 0; i < blocks.length; i++) {
+			var tile = blocks[i];
 			if (tile.dying) continue;
 			if (tile.touching({x: e.touches[t].pageX, y: e.touches[t].pageY})) {
 				tile.kill();
@@ -76,8 +76,8 @@ function touchBlocks(e) {
 
 function clickBlocks(e) {
 	if (!interactive) return;
-	for (let i = 0; i < blocks.length; i++) {
-		const tile = blocks[i];
+	for (var i = 0; i < blocks.length; i++) {
+		var tile = blocks[i];
 		if (tile.dying) continue;
 		if (tile.touching({x: e.pageX, y: e.pageY})) {
 			tile.kill();

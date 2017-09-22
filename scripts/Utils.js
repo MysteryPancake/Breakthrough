@@ -1,7 +1,7 @@
 "use strict";
 
-const music = new Audio();
-const snap = new Audio("sound/Snap.wav");
+var music = new Audio();
+var snap = new Audio("sound/Snap.wav");
 
 function playMusic(name, level) {
 	music.pause();
@@ -21,14 +21,14 @@ function randomBetween(min, max) {
 }
 
 function randomColor() {
-	const r = Math.floor(Math.random() * 256);
-	const g = Math.floor(Math.random() * 256);
-	const b = Math.floor(Math.random() * 256);
+	var r = Math.floor(Math.random() * 256);
+	var g = Math.floor(Math.random() * 256);
+	var b = Math.floor(Math.random() * 256);
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
 function randomHue() {
-	const h = Math.floor(Math.random() * 361);
+	var h = Math.floor(Math.random() * 361);
 	return `hsl(${h}, 100%, 50%)`;
 }
 

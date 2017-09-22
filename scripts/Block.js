@@ -14,7 +14,7 @@ function block(x, y, width, height, color) {
 		this.width -= 6;
 		this.height -= 6;
 		if (this.width < 1 || this.height < 1) {
-			const index = blocks.indexOf(this);
+			var index = blocks.indexOf(this);
 			if (index > -1) {
 				blocks.splice(index, 1);
 				if (blocks.length < 1) {
