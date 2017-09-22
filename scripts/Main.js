@@ -62,6 +62,7 @@ function resize() {
 }
 
 function touchBlocks(e) {
+	e.preventDefault();
 	if (!interactive) return;
 	for (var t = 0; t < e.touches.length; t++) {
 		for (var i = 0; i < blocks.length; i++) {
@@ -75,6 +76,7 @@ function touchBlocks(e) {
 }
 
 function clickBlocks(e) {
+	e.preventDefault();
 	if (!interactive) return;
 	for (var i = 0; i < blocks.length; i++) {
 		var tile = blocks[i];
