@@ -1,11 +1,9 @@
 html, body {
-	background: black;
 	margin: 0;
 	overflow: hidden;
 	padding: 0;
 }
 
 canvas {
-	background: black;
 	display: block;
 }
