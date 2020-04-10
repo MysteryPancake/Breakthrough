@@ -78,7 +78,7 @@ struct AudioManager {
       markerList.append(marker)
     }
     
-    data.deallocate(capacity: length)
+    data.deallocate()
     
     return markerList
   }

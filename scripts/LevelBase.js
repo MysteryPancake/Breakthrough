@@ -8,22 +8,18 @@ function Level(canvas) {
 	this.heightBias = 1.25;
 	this.sizeMin = 0.006;
 	this.sizeMax = 0.01;
-	this.blocks = [];
+	this.blocks = new Set();
 	this.score = 0;
 	this.generateBlocks = function() {
-		this.blocks = [];
+		this.blocks.clear();
 		blockColor = backgroundColor;
-		var heightCount = randomBetween(this.spawnRect.height * this.sizeMin * this.heightBias, this.spawnRect.height * this.sizeMax * this.heightBias);
-		var height = this.spawnRect.height / heightCount;
-		for (var j = 0; j < heightCount; j++) {
-			var widthCount = randomBetween(this.spawnRect.width * this.sizeMin, this.spawnRect.width * this.sizeMax);
-			var width = this.spawnRect.width / widthCount;
-			for (var i = 0; i < widthCount; i++) {
-				var pos = { x: 0, y: 0 };
-				var x = pos.x + i * width;
-				var y = pos.y + j * height;
-				var tile = new Block(x, y, width, height, blockColor);
-				this.blocks.push(tile);
+		const heightCount = randomBetween(this.spawnRect.height * this.sizeMin * this.heightBias, this.spawnRect.height * this.sizeMax * this.heightBias);
+		const height = this.spawnRect.height / heightCount;
+		for (let j = 0; j < heightCount; j++) {
+			const widthCount = randomBetween(this.spawnRect.width * this.sizeMin, this.spawnRect.width * this.sizeMax);
+			const width = this.spawnRect.width / widthCount;
+			for (let i = 0; i < widthCount; i++) {
+				this.blocks.add(new Block(i * width, j * height, width, height, blockColor));
 			}
 		}
 		backgroundColor = randomColor();
@@ -39,9 +35,8 @@ function Level(canvas) {
 	this.touched = function(e) {
 		e.preventDefault();
 		if (!this.interactive) return;
-		for (var t = 0; t < e.targetTouches.length; t++) {
-			for (var i = 0; i < this.blocks.length; i++) {
-				var tile = this.blocks[i];
+		for (let t = 0; t < e.targetTouches.length; t++) {
+			for (let tile of this.blocks) {
 				if (tile.dying) continue;
 				if (tile.touching(e.targetTouches[t].pageX, e.targetTouches[t].pageY)) {
 					this.killBlock(tile);
@@ -52,8 +47,7 @@ function Level(canvas) {
 	this.clicked = function(e) {
 		e.preventDefault();
 		if (!this.interactive || !this.clicking) return;
-		for (var i = 0; i < this.blocks.length; i++) {
-			var tile = this.blocks[i];
+		for (let tile of this.blocks) {
 			if (tile.dying) continue;
 			if (tile.touching(e.pageX, e.pageY)) {
 				this.killBlock(tile);
@@ -61,9 +55,9 @@ function Level(canvas) {
 		}
 	};
 	this.load = function(game) { // TODO: FIX THIS MESS
-		if (game === 2) {
-			return new Level2(this);
-		}
+		//if (game === 2) {
+			//return new Level2(this);
+		//}
 	};
 	this.generateBlocks();
 }
