@@ -1,11 +1,9 @@
 "use strict";
 
+var game;
 var canvas;
 var context;
-var spawnRect;
 var frame = 0;
-var blocks = [];
-var interactive = true;
 var blockColor = randomColor();
 var backgroundColor = randomColor();
 var requestFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(e) { return window.setTimeout(e, 1000 / 60); };
@@ -14,18 +12,25 @@ var cancelFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFra
 function setup() {
 	canvas = document.getElementById("canvas");
 	context = canvas.getContext("2d", { alpha: false });
-	spawnRect = canvas; // debug stuff
 	window.addEventListener("resize", resize);
 	window.addEventListener("orientationchange", resize);
 	resize();
-	window.addEventListener("touchstart", touched);
-	window.addEventListener("touchmove", touched);
-	window.addEventListener("touchend", touched);
-	window.addEventListener("mousedown", clicked);
-	window.addEventListener("mousemove", clicked);
-	window.addEventListener("mouseup", clicked);
-	generateBlocks();
-	setupAudio();
+	game = new Level(canvas);
+	game.load(2);
+	if (window.ontouchstart) {
+		window.addEventListener("touchstart", fix);
+		window.addEventListener("touchmove", game.touched.bind(game));
+		window.addEventListener("touchend", game.touched.bind(game));
+	} else {
+		window.addEventListener("mousedown", fix);
+		window.addEventListener("mousemove", game.clicked.bind(game));
+		window.addEventListener("mouseup", up);
+	}
+	window.addEventListener("contextmenu", hide);
+}
+
+function hide(e) {
+	e.preventDefault();
 }
 
 function resize() {
@@ -35,64 +40,31 @@ function resize() {
 	frame = requestFrame(draw);
 }
 
-function touched(e) {
-	e.preventDefault();
-	if (!interactive) return;
-	for (var t = 0; t < e.targetTouches.length; t++) {
-		for (var i = 0; i < blocks.length; i++) {
-			var tile = blocks[i];
-			if (tile.dying) continue;
-			if (tile.touching({ x: e.targetTouches[t].pageX, y: e.targetTouches[t].pageY })) {
-				tile.kill();
-			}
-		}
+function fix(e) {
+	setupAudio();
+	if (window.ontouchstart) {
+		game.touched(e);
+	} else {
+		game.clicking = true;
+		game.clicked(e);
 	}
 }
 
-function clicked(e) {
-	e.preventDefault();
-	if (!interactive) return;
-	for (var i = 0; i < blocks.length; i++) {
-		var tile = blocks[i];
-		if (tile.dying) continue;
-		if (tile.touching({ x: e.pageX, y: e.pageY })) {
-			tile.kill();
-		}
-	}
-}
-
-function generateBlocks() {
-	var sizeMin = 0.006;
-	var sizeMax = 0.01;
-	var heightBias = 1.25;
-	blocks = [];
-	blockColor = backgroundColor;
-	backgroundColor = randomColor();
-	var heightCount = randomBetween(spawnRect.height * sizeMin * heightBias, spawnRect.height * sizeMax * heightBias);
-	var height = spawnRect.height / heightCount;
-	for (var j = 0; j < heightCount; j++) {
-		var widthCount = randomBetween(spawnRect.width * sizeMin, spawnRect.width * sizeMax);
-		var width = spawnRect.width / widthCount;
-		for (var i = 0; i < widthCount; i++) {
-			var pos = { x: 0, y: 0 };
-			var x = pos.x + i * width;
-			var y = pos.y + j * height;
-			var tile = new block(x, y, width, height, blockColor);
-			blocks.push(tile);
-		}
-	}
+function up(e) {
+	game.clicked(e);
+	game.clicking = false;
 }
 
 function draw() {
 	context.fillStyle = backgroundColor;
 	context.fillRect(0, 0, canvas.width, canvas.height);
-	for (var i = blocks.length - 1; i >= 0; i--) {
-		var tile = blocks[i];
+	for (var i = game.blocks.length - 1; i >= 0; i--) {
+		var tile = game.blocks[i];
 		tile.update();
 		if (tile.width < 1 || tile.height < 1) {
-			blocks.splice(i, 1);
-			if (blocks.length <= 0) {
-				generateBlocks();
+			game.blocks.splice(i, 1);
+			if (game.blocks.length <= 0) {
+				game.generateBlocks();
 			}
 		}
 		tile.draw(context);

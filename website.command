@@ -1,0 +1,1 @@
+http-server "./Desktop/Breakthrough/WEBSITE" --cors -c-1 -o
