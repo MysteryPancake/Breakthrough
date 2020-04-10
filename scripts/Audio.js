@@ -6,12 +6,12 @@ let player;
 function setupAudio() {
 	if (player) return;
 	player = new (window.AudioContext || window.webkitAudioContext)();
-	loadBuffer("Snap", function(buffer) {
+	loadBuffer("Snap", true, function(buffer) {
 		buffers.snap = buffer;
 		playSnap();
 	});
 	for (let i = 1; i <= 6; i++) {
-		loadBuffer(i, function(buffer, name, markers) {
+		loadBuffer(i, false, function(buffer, name, markers) {
 			buffers[name] = { buffer: buffer, markers: markers };
 		});
 	}
@@ -32,9 +32,9 @@ function getMarkers(buffer) {
 	return markers;
 }
 
-function loadBuffer(file, func) {
+function loadBuffer(file, compressed, func) {
 	const request = new XMLHttpRequest();
-	request.open("GET", "sound/" + file + ".wav", true);
+	request.open("GET", "sound/" + file + (compressed ? ".mp3" : ".wav"), true);
 	request.responseType = "arraybuffer";
 	request.onreadystatechange = function() {
 		if (this.readyState === 4 && this.status === 200) {
