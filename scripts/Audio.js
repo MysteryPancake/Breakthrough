@@ -38,7 +38,7 @@ function loadBuffer(file, compressed, func) {
 	request.responseType = "arraybuffer";
 	request.onreadystatechange = function() {
 		if (this.readyState === 4 && this.status === 200) {
-			const markers = getMarkers(this.response);
+			const markers = compressed ? {} : getMarkers(this.response);
 			player.decodeAudioData(this.response, function(buffer) {
 				func(buffer, file, markers);
 			});
