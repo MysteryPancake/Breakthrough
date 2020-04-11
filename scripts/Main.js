@@ -34,9 +34,7 @@ function hide(e) {
 
 function touch(e) {
 	e.preventDefault();
-	setTimeout(function() {
-		manager.touched(e);
-	});
+	manager.touched(e);
 }
 
 function move(e) {
