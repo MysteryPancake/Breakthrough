@@ -61,9 +61,9 @@ function setup() {
 	resize();
 	manager = new SceneManager(canvas.getContext("2d", { alpha: false }));
 	if (window.ontouchstart) {
-		document.addEventListener("touchstart", fix, { passive: false });
-		document.addEventListener("touchmove", touch, { passive: false });
-		document.addEventListener("touchend", touch, { passive: false });
+		window.addEventListener("touchstart", fix);
+		window.addEventListener("touchmove", touch);
+		window.addEventListener("touchend", touch);
 	} else {
 		window.addEventListener("mousedown", fix);
 		window.addEventListener("mousemove", move);

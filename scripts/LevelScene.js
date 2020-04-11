@@ -62,8 +62,8 @@ function LevelScene(scene) {
 	};
 	this.touched = function(e) {
 		if (!this.interactive) return;
-		for (let t = 0; t < e.targetTouches.length; t++) {
-			this.killTouchedBlocks(e.targetTouches[t].pageX, e.targetTouches[t].pageY);
+		for (let t = 0; t < e.touches.length; t++) {
+			this.killTouchedBlocks(e.touches[t].pageX, e.touches[t].pageY);
 		}
 	};
 	this.clicked = function(e) {

@@ -53,8 +53,8 @@ function MenuScene(scene) {
 	};
 	this.touched = function(e) {
 		if (e.type !== "touchstart") return;
-		for (let t = 0; t < e.targetTouches.length; t++) {
-			this.checkButton(e.targetTouches[t].pageX, e.targetTouches[t].pageY);
+		for (let t = 0; t < e.touches.length; t++) {
+			this.checkButton(e.touches[t].pageX, e.touches[t].pageY);
 		}
 	};
 }
