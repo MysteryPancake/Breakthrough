@@ -63,7 +63,7 @@ function setup() {
 	if (window.ontouchstart) {
 		window.addEventListener("touchstart", fix);
 		window.addEventListener("touchmove", touch);
-		window.addEventListener("touchend", touch);
+		//window.addEventListener("touchend", touch);
 	} else {
 		window.addEventListener("mousedown", fix);
 		window.addEventListener("mousemove", move);
