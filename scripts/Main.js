@@ -54,10 +54,6 @@ function draw() {
 	frame = requestFrame(draw);
 }
 
-function mobileFix(e) {
-	e.preventDefault();
-}
-
 function setup() {
 	canvas = document.getElementById("canvas");
 	window.addEventListener("resize", resize);
@@ -68,8 +64,6 @@ function setup() {
 		window.addEventListener("touchstart", fix);
 		window.addEventListener("touchmove", touch);
 		window.addEventListener("touchend", touch);
-		window.addEventListener("touchcancel", mobileFix);
-		window.addEventListener("touchleave", mobileFix);
 	} else {
 		window.addEventListener("mousedown", fix);
 		window.addEventListener("mousemove", move);
