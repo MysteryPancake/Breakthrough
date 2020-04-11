@@ -7,13 +7,13 @@ function Block(x, y, width, height, color) {
 	this.height = height;
 	this.color = color;
 	this.dying = false;
-	this.chosen = true;
 	this.update = function() {
 		if (!this.dying) return;
 		this.x += 3;
 		this.y += 3;
 		this.width -= 6;
 		this.height -= 6;
+		return this.width < 1 || this.height < 1;
 	};
 	this.draw = function(context) {
 		context.fillStyle = this.color;

@@ -16,6 +16,6 @@ function randomHue() {
 	return "hsl(" + h + ", 100%, 50%)";
 }
 
-function maxSize(rect) {
-	return Math.max(rect.width, rect.height);
+function minSize(rect) {
+	return Math.min(rect.width, rect.height);
 }

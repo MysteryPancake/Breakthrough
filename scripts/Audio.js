@@ -3,20 +3,6 @@
 const buffers = {};
 let player;
 
-function setupAudio() {
-	if (player) return;
-	player = new (window.AudioContext || window.webkitAudioContext)();
-	loadBuffer("Snap", true, function(buffer) {
-		buffers.snap = buffer;
-		playSnap();
-	});
-	for (let i = 1; i <= 6; i++) {
-		loadBuffer(i, false, function(buffer, name, markers) {
-			buffers[name] = { buffer: buffer, markers: markers };
-		});
-	}
-}
-
 function getMarkers(buffer) {
 	const markers = {};
 	const cuePoints = new wavefile.WaveFile(new Uint8Array(buffer)).listCuePoints();
@@ -32,13 +18,13 @@ function getMarkers(buffer) {
 	return markers;
 }
 
-function loadBuffer(file, compressed, func) {
+function loadBuffer(file, loadMarkers, func) {
 	const request = new XMLHttpRequest();
-	request.open("GET", "sound/" + file + (compressed ? ".mp3" : ".wav"), true);
+	request.open("GET", "sound/" + file + (loadMarkers ? ".wav" : ".mp3"), true);
 	request.responseType = "arraybuffer";
 	request.onreadystatechange = function() {
 		if (this.readyState === 4 && this.status === 200) {
-			const markers = compressed ? {} : getMarkers(this.response);
+			const markers = loadMarkers ? getMarkers(this.response) : {};
 			player.decodeAudioData(this.response, function(buffer) {
 				func(buffer, file, markers);
 			});
@@ -47,10 +33,20 @@ function loadBuffer(file, compressed, func) {
 	request.send();
 }
 
-function playSnap() {
-	if (!player) return;
+function preloadMusic(game, loadMarkers) {
+	if (buffers[game]) return;
+	loadBuffer(game, loadMarkers, function(buffer, name, markers) {
+		buffers[name] = { buffer: buffer, markers: markers };
+	});
+}
+
+function playSnap(pitch) {
+	if (!player || !buffers.snap) return;
 	const buffer = player.createBufferSource();
 	buffer.buffer = buffers.snap;
+	if (pitch !== undefined) {
+		buffer.playbackRate.value = pitch;
+	}
 	buffer.connect(player.destination);
 	buffer.start();
 }
@@ -58,14 +54,24 @@ function playSnap() {
 function playMusic(level, section) {
 	if (!player) return;
 	const data = buffers[level];
-	if (data) {
-		const buffer = player.createBufferSource();
-		buffer.buffer = data.buffer;
-		buffer.connect(player.destination);
-		if (section) {
-			buffer.start(0, data.markers[section].start, data.markers[section].duration);
-		} else {
-			buffer.start();
-		}
+	if (!data) return;
+	const buffer = player.createBufferSource();
+	buffer.buffer = data.buffer;
+	buffer.connect(player.destination);
+	if (section && data.markers[section]) {
+		buffer.start(0, data.markers[section].start, data.markers[section].duration);
+		return data.markers[section].duration;
+	} else {
+		buffer.start();
 	}
+}
+
+function setupAudio(manager) {
+	if (player) return;
+	player = new (window.AudioContext || window.webkitAudioContext)();
+	loadBuffer("Snap", false, function(buffer) {
+		buffers.snap = buffer;
+		playSnap();
+		preloadMusic(manager.getHighestLevel(), true);
+	});
 }
