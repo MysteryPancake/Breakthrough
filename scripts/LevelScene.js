@@ -61,14 +61,12 @@ function LevelScene(scene) {
 		this.scene.loadScore(this.score);
 	};
 	this.touched = function(e) {
-		e.preventDefault();
 		if (!this.interactive) return;
 		for (let t = 0; t < e.targetTouches.length; t++) {
 			this.killTouchedBlocks(e.targetTouches[t].pageX, e.targetTouches[t].pageY);
 		}
 	};
 	this.clicked = function(e) {
-		e.preventDefault();
 		if (!this.interactive) return;
 		this.killTouchedBlocks(e.pageX, e.pageY);
 	};

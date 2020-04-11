@@ -9,6 +9,7 @@ const cancelFrame = window.cancelAnimationFrame || window.webkitCancelAnimationF
 
 function fix(e) {
 	setupAudio(manager);
+	e.preventDefault();
 	if (window.ontouchstart) {
 		manager.touched(e);
 	} else {
@@ -31,12 +32,19 @@ function hide(e) {
 	e.preventDefault();
 }
 
+function touch(e) {
+	e.preventDefault();
+	manager.touched(e);
+}
+
 function move(e) {
 	if (!clicking) return;
+	e.preventDefault();
 	manager.clicked(e);
 }
 
 function up(e) {
+	e.preventDefault();
 	manager.clicked(e);
 	clicking = false;
 }
@@ -54,8 +62,8 @@ function setup() {
 	manager = new SceneManager(canvas.getContext("2d", { alpha: false }));
 	if (window.ontouchstart) {
 		window.addEventListener("touchstart", fix);
-		window.addEventListener("touchmove", manager.touched.bind(manager));
-		window.addEventListener("touchend", manager.touched.bind(manager));
+		window.addEventListener("touchmove", touch);
+		window.addEventListener("touchend", touch);
 	} else {
 		window.addEventListener("mousedown", fix);
 		window.addEventListener("mousemove", move);
