@@ -54,6 +54,10 @@ function draw() {
 	frame = requestFrame(draw);
 }
 
+function mobileFix(e) {
+	e.preventDefault();
+}
+
 function setup() {
 	canvas = document.getElementById("canvas");
 	window.addEventListener("resize", resize);
@@ -61,9 +65,11 @@ function setup() {
 	resize();
 	manager = new SceneManager(canvas.getContext("2d", { alpha: false }));
 	if (window.ontouchstart) {
-		document.body.addEventListener("touchstart", fix);
-		document.body.addEventListener("touchmove", touch);
-		document.body.addEventListener("touchend", touch);
+		window.addEventListener("touchstart", fix);
+		window.addEventListener("touchmove", touch);
+		window.addEventListener("touchend", touch);
+		window.addEventListener("touchcancel", mobileFix);
+		window.addEventListener("touchleave", mobileFix);
 	} else {
 		window.addEventListener("mousedown", fix);
 		window.addEventListener("mousemove", move);
