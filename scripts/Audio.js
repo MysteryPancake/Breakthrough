@@ -18,26 +18,28 @@ function getMarkers(buffer) {
 	return markers;
 }
 
-function loadBuffer(file, loadMarkers, func) {
-	const request = new XMLHttpRequest();
-	request.open("GET", "sound/" + file + (loadMarkers ? ".wav" : ".mp3"), true);
-	request.responseType = "arraybuffer";
-	request.onreadystatechange = function() {
-		if (this.readyState === 4 && this.status === 200) {
-			const markers = loadMarkers ? getMarkers(this.response) : {};
-			player.decodeAudioData(this.response, function(buffer) {
-				func(buffer, file, markers);
-			});
-		}
-	};
-	request.send();
+function loadBuffer(file, loadMarkers) {
+	return new Promise((resolve, reject) => {
+		window.fetch("sound/" + file + (loadMarkers ? ".wav" : ".mp3")).then(function(response) {
+			if (response.ok) {
+				return response.arrayBuffer();
+			} else {
+				throw new Error("HTTP error, status = " + response.status);
+			}
+		}).then(function(buffer) {
+			const markers = loadMarkers ? getMarkers(buffer) : {};
+			player.decodeAudioData(buffer, function(decoded) {
+				resolve({ buffer: decoded, name: file, markers: markers });
+			}, reject);
+		}).catch(reject);
+	});
 }
 
 function preloadMusic(game, loadMarkers) {
 	if (buffers[game]) return;
-	loadBuffer(game, loadMarkers, function(buffer, name, markers) {
-		buffers[name] = { buffer: buffer, markers: markers };
-	});
+	loadBuffer(game, loadMarkers).then((result) => {
+		buffers[result.name] = result;
+	}).catch(window.alert);
 }
 
 function playSnap(pitch) {
@@ -69,9 +71,9 @@ function playMusic(level, section) {
 function setupAudio(manager) {
 	if (player) return;
 	player = new (window.AudioContext || window.webkitAudioContext)();
-	loadBuffer("Snap", false, function(buffer) {
-		buffers.snap = buffer;
+	loadBuffer("Snap", false).then((result) => {
+		buffers.snap = result.buffer;
 		playSnap();
 		preloadMusic(manager.getHighestLevel(), true);
-	});
+	}).catch(window.alert);
 }
